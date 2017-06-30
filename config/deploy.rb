@@ -21,6 +21,8 @@ namespace :deploy do
     on roles(:app) do
       within release_path do
         execute "which ruby"
+        execute "pwd"
+        execure "ls -la"
         execute "RACK_ENV=production rake db:migrate"
       end
     end
