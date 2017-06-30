@@ -20,7 +20,7 @@ namespace :deploy do
   task :migrate do
     on roles(:app) do
       within release_path do
-        execute "$HOME/.rbenv/bin/rbenv exec bundle exec rake RACK_ENV=production db:migrate"
+        execute "RACK_ENV=production rake db:migrate"
       end
     end
   end
