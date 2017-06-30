@@ -22,17 +22,3 @@ set :keep_releases, 5
 
 set :passenger_restart_with_touch, true
 
-namespace :deploy do
-  task :start do
-    run "touch #{current_release}/tmp/restart.txt"
-  end
-
-  task :stop do
-    # Do nothing.
-  end
-
-  desc "Restart Application"
-  task :restart do
-    run "touch #{current_release}/tmp/restart.txt"
-  end
-end
