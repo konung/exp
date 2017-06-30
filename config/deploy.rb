@@ -20,6 +20,7 @@ namespace :deploy do
   task :migrate do
     on roles(:app) do
       within release_path do
+        execute "pwd"
         execute "rake RACK_ENV=production db:migrate"
       end
     end
