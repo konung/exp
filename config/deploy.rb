@@ -2,7 +2,7 @@
 lock "3.8.2"
 
 set :application, "exp.trb.to"
-set :repo_url, "git@github.com:konung/exp.git"
+
 
 # Instead of storing keys on the server. Make sure ssh-agent is up and running on the local machine.
 set :ssh_options, { :forward_agent => true }
