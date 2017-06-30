@@ -15,15 +15,16 @@ set :format_options, command_output: true, log_file: "log/capistrano.log", color
 append :linked_files, "config/secrets.yml", ".env.production"
 append :linked_dirs, "log", "public", "tmp/pids", "tmp/cache", "tmp/sockets", "uploads"
 
+set :default_env, {
+  'RACK_ENV' => 'production'
+}
+
 namespace :deploy do
   desc "migrate Production db"
   task :migrate do
     on roles(:app) do
       within release_path do
-        execute "which ruby"
-        execute "pwd"
-        execure "ls -la"
-        execute "RACK_ENV=production rake db:migrate"
+        rake "db:migrate"
       end
     end
   end
