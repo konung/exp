@@ -5,5 +5,5 @@ namespace :deploy do
       execute "bundle exec rake RACK_ENV=production db:migrate"
     end
   end
-  after :deploy, "deploy:updated"
+  before :deploy, "deploy:symlink:release"
 end
