@@ -20,18 +20,5 @@ namespace :deploy do
       end
     end
   end
-
-
-  desc 'Runs rake db:migrate'
-  task migrating: [:set_rails_env] do
-    on fetch(:migration_servers) do
-      within release_path do
-        with rails_env: fetch(:rails_env) do
-          execute :rake, 'RACK_ENV=production db:migrate'
-        end
-      end
-    end
-  end
-
   after 'deploy:updated', 'deploy:migrate'
 end
