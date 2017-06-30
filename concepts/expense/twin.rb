@@ -13,10 +13,11 @@ module Expense::Twin
       property :currency
       property :paid_at
       property :file_path
-      property :identifier # arbitrary ID, like booking number.
+      property :invoice_number # arbitrary ID, like booking number.
+      property :created_at # FIXME, only writeable at Create
     end
 
-    property :id # FIXME: only for `row`.
+    property :id, writeable: false # FIXME: only for `row`. # fixme: gives evil constraint error when not readonly.
 
     # TODO: `unnest :content` for all
     unnest :description, from: :content
@@ -26,7 +27,8 @@ module Expense::Twin
     unnest :qty, from: :content
     unnest :paid_at, from: :content
     unnest :file_path, from: :content
-    unnest :identifier, from: :content
+    unnest :invoice_number, from: :content
+    unnest :created_at, from: :content
 
     # FIXME: only needed for Create/Update
     # This sits here since we want the twin.unit_price = 1.2 everywhere.
@@ -41,7 +43,7 @@ module Expense::Twin
 
     # FIXME: only needed for Index/Show
     def effective_amount
-      converted = Money.new(unit_price * content.qty, currency).exchange_to("SGD")
+      converted = effective_money
       "#{converted.currency} #{converted.format}"
     end
 
@@ -54,6 +56,10 @@ module Expense::Twin
     # DISCUSS: only in cell?
     def description
       [ source, super ].compact.join(" / ")
+    end
+
+    def effective_money # TODO: only for Index/Show/Claim::Create
+      Money.new(unit_price * content.qty, currency).exchange_to("SGD")
     end
 
     # FIXME: only needed for Create/Update

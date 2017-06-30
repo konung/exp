@@ -1,16 +1,14 @@
 Sequel.migration do
   up do
-    create_table(:claims) do
+    create_table(:payment_vouchers) do
       primary_key :id
       column :content, "jsonb"
       column :created_at, DateTime
+      column :serial_number, String
     end
-
-    add_column :expenses, :claim_id, Integer
   end
 
   down do
-    drop_table(:claims)
-    drop_column :expenses, :claim_id
+    drop_table(:payment_vouchers)
   end
 end
