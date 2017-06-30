@@ -22,3 +22,4 @@ set :keep_releases, 5
 
 set :passenger_restart_with_touch, true
 
+set :migration_role, :app
