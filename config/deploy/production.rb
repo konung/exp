@@ -7,8 +7,7 @@ set :scm, :git
 set :repo_url, "git@github.com:konung/exp.git"
 set :branch, "master"
 
-set :migrate_env, "RACK_ENV=production"
-set :rack_env, "production"
-set :rails_env, "production"
+set :rack_env, :production
+set :rails_env, :production
 set :user, "deploy"
 set :use_sudo, false
