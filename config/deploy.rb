@@ -40,19 +40,3 @@ set :keep_releases, 5
 
 set :passenger_restart_with_touch, true
 
-
-namespace :customs do
-  desc "Run Migrations"
-  task :migrations do
-    on roles(:app) do
-      within release_path do
-        with rack_env: fetch(:rack_env) do
-          execute :rake, "db:migrate"
-        end
-      end
-    end
-  end
-end
-
-
-after "deploy", "customs:migrations"
