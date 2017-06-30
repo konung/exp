@@ -5,7 +5,7 @@ set :repo_url, "git@github.com:konung/exp.git"
 set :branch, "master"
 set :deploy_to, "/var/www/exp"
 set :rack_env, :production
-set :rails_env, :production
+set :rails_env, "RACK_ENV=production"
 set :user, "deploy"
 set :use_sudo, false
 set :rbenv_type, :user
