@@ -1,8 +1,12 @@
 namespace :deploy do
   desc 'Runs rake db:migrate'
   task :migrate do
-    execute :rake, 'RACK_ENV=production db:migrate'
+    on fetch(:migration_servers) do
+      within :release_path do
+          execute :rake, 'RACK_ENV=production db:migrate'
+      end
+    end
   end
 
-  after 'deploy:cleanup', 'deploy:migrate'
+  after 'bundler:install', 'deploy:migrate'
 end
