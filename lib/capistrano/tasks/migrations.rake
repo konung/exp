@@ -3,7 +3,7 @@ namespace :deploy do
   task :migrate do
     on fetch(:migration_servers) do
       within :release_path do
-          execute :rake, 'RACK_ENV=production db:migrate'
+          execute :rake, 'bundle exec rake RACK_ENV=production db:migrate'
       end
     end
   end
