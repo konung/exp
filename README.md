@@ -27,3 +27,12 @@ RACK_ENV=test rake db:migrate[0]
 ```
 RACK_ENV=test rake db:debug
 ```
+
+
+## TODO
+
+* unique invoice number (or warning)
+* unique description (e.g. booking number, with warning!)
+  trim invoice number
+* unit_price: remove ,
+* date: any format

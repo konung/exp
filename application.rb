@@ -1,3 +1,5 @@
+Encoding.default_external = 'UTF-8' # FIXME: needed for deployed app.
+
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 
 require "stack/env"
@@ -19,6 +21,10 @@ Trailblazer::Cell.send :include, Cell::Erb
 I18n.config.available_locales = :en
 Money.add_rate("EUR", "SGD", 1.55) # Not a fan of this API.
 Money.add_rate("AUD", "SGD", 1.06) # Not a fan of this API.
+Money.add_rate("TWD", "SGD", 0.045) # Not a fan of this API.
+Money.add_rate("USD", "SGD", 1.38) # Not a fan of this API.
+Money.add_rate("GBP", "SGD", 1.78) # Not a fan of this API.
+Money.add_rate("RON", "SGD", 0.34) # Not a fan of this API.
 
 Reform::Form.class_eval do
   include Reform::Form::Dry
@@ -29,7 +35,20 @@ end
 
 require_relative "concepts/exp/step/created_at" # FIXME.
 
-Trailblazer::Loader.new.(debug: false, concepts_root: "./concepts/") { |file|
+# FIXME: this will be introduced in loader-1.0.
+# TODO: allow particular orders, e.g. expense, claim
+SortConceptsAlphabetically = ->(input, *) { input.sort }
+
+Trailblazer::Loader.new.
+instance_exec do
+  def default_circuit
+    super.tap do |pipe|
+      pipe.insert(pipe.index(Trailblazer::Loader::SortByLevel), SortConceptsAlphabetically)
+    end
+  end
+  self
+end.
+(debug: false, concepts_root: "./concepts/") { |file|
   puts file
   require_relative(file) }
 
@@ -74,7 +93,7 @@ module Exp
 
     # set :public_folder, "assets/__uploads"
     get "/files/:path" do
-      send_file File.join("__uploads", params[:path])
+      send_file File.join("uploads", params[:path])
     end
   end
 end
