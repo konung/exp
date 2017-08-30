@@ -2,10 +2,13 @@ Encoding.default_external = 'UTF-8' # FIXME: needed for deployed app.
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 
-require "stack/env"
-require "stack/db"
+require "tamarama/env"
+require "tamarama/db/sequel"
+require "tamarama/db/sequel/database_validator"
 
-DB.connect
+db = Tamarama::DB::Sequel.()
+Tamarama::DB::Sequel::DatabaseValidator.(db)
+
 
 require "trailblazer/operation"
 # require "reform/form/active_model/validations"
@@ -25,6 +28,7 @@ Money.add_rate("TWD", "SGD", 0.045) # Not a fan of this API.
 Money.add_rate("USD", "SGD", 1.38) # Not a fan of this API.
 Money.add_rate("GBP", "SGD", 1.78) # Not a fan of this API.
 Money.add_rate("RON", "SGD", 0.34) # Not a fan of this API.
+Money.add_rate("HKD", "SGD", 0.18) # Not a fan of this API.
 
 Reform::Form.class_eval do
   include Reform::Form::Dry
@@ -33,7 +37,7 @@ end
 module Exp
 end
 
-require_relative "concepts/exp/step/created_at" # FIXME.
+require_relative "concepts/exp/step/timestamps" # FIXME.
 
 # FIXME: this will be introduced in loader-1.0.
 # TODO: allow particular orders, e.g. expense, claim
@@ -71,12 +75,27 @@ module Exp
       Expense::Endpoint.upload( params: params, sinatra: self )
     end
 
+    get "/expenses/edit/:id" do
+      Expense::Endpoint.edit( params: params, sinatra: self )
+    end
+    post "/expenses/:id" do
+      Expense::Endpoint.update( params: params, sinatra: self )
+    end
+
+
     post "/claims" do
       Expense::Endpoint.claim( params: params, sinatra: self )
     end
 
     get "/claims/:id" do
       Claim::Endpoint.show( params: params, sinatra: self )
+    end
+
+    # FIXME: security?
+    get "/debug/:id" do
+      Expense::Update.( id: 94, unit_price: "17" )
+      CGI::escape_html Expense::Row[ params[:id] ].inspect
+
     end
 
     # Get assets going.

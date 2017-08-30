@@ -374,30 +374,31 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            Create expense
+                            <%= heading %>
                         </div>
                         <div class="panel-body">
                             <div class="row">
-                                <%= Object.new.extend(Formular::Helper).form(model, "/expenses", method: :post) do |f| %>
+                                <%= Object.new.extend(Formular::Helper).form(model, post_url, method: :post) do |f| %>
                                   <div class="col-lg-6">
                                     <%= f.row do %>
-                                      <%= f.input_group :invoice_number, label: "Invoice no.", placeholder: "269504", inline_col_class: ['col-md-6'] do |input| %>
-                                        <%= input.control %>
-                                        <%= input.group_addon('<input type="checkbox" value="1"/>') %>
-                                      <% end %>
+                                      <%= f.input :source, placeholder: "Biosk Freiburg", label: "Paid to", inline_col_class: ['col-md-6'] %>
 
                                       <%= f.input :invoice_date, placeholder: "24/12/2017", label: "Invoice date", inline_col_class: ['col-md-6'] %>
                                     <% end %>
 
                                     <%= f.row do %>
-                                      <%= f.input :source, placeholder: "Biosk Freiburg", label: "Paid to", inline_col_class: ['col-md-4'] %>
-                                      <%= f.input :description, placeholder: "Delicious whisky", label: "Description", inline_col_class: ['col-md-8'] %>
+                                      <%= f.input_group :invoice_number, label: "Invoice no.", placeholder: "269504", inline_col_class: ['col-md-5'] do |input| %>
+                                        <%= input.control %>
+                                        <%= input.group_addon('<input type="checkbox" value="1"/>') %>
+                                      <% end %>
+                                      <%= f.input :description, placeholder: "Delicious whisky", label: "Description", inline_col_class: ['col-md-7'] %>
                                     <% end %>
 
 
                                     <%= f.row do %>
-                                      <%= f.input :unit_price, placeholder: "12.99", label: "Unit price", inline_col_class: ['col-md-6'] %>
-                                      <%= f.select(:currency, label: 'Public', inline_col_class: ['col-md-6'], collection: model.currencies) %>
+                                      <%= f.input :unit_price, placeholder: "12.99", label: "Unit price", inline_col_class: ['col-md-4'] %>
+                                      <%= f.select(:currency, label: 'Currency', inline_col_class: ['col-md-4'], collection: model.currencies) %>
+                                      <%= f.input :notes, placeholder: "Book with Nico!", label: "Notes", inline_col_class: ['col-md-4'] %>
                                     <% end %>
 
                                     <%= f.hidden :file_path %>

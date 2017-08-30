@@ -17,6 +17,7 @@ module Expense::Cell
 
       property :file_path
       property :invoice_number
+      property :invoice_date
 
       def receipt_link
         return unless has_receipt?
@@ -27,6 +28,22 @@ module Expense::Cell
 
       def has_receipt?
         file_path
+      end
+
+      # TODO: test all cases, nil, empty string, etc
+      # FIXME: we always want nil or a Date here, for Christ's sake!
+      def invoice_date # FIXME: redundant with Form::Create#invoice_date
+        return if super.nil? || super == ""
+        return super unless super.is_a?(DateTime)
+        super.strftime("%d/%b/%y")
+      end
+
+      def header_link
+        %{<a href="/expenses/edit/#{model.id}">#{description}</a>}
+      end
+
+      def description
+        [ model.source, model.description ].compact.join(" / ")
       end
     end
   end
