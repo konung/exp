@@ -29,6 +29,10 @@ Money.add_rate("USD", "SGD", 1.38) # Not a fan of this API.
 Money.add_rate("GBP", "SGD", 1.78) # Not a fan of this API.
 Money.add_rate("RON", "SGD", 0.34) # Not a fan of this API.
 Money.add_rate("HKD", "SGD", 0.18) # Not a fan of this API.
+Money.add_rate("RUB", "SGD", 0.028) # Not a fan of this API.
+Money.add_rate("UAH", "SGD", 0.058) # Not a fan of this API.
+Money.add_rate("IDR", "SGD", 0.00016) # Not a fan of this API.
+Money.add_rate("CAD", "SGD", 1.05) # Not a fan of this API.
 
 Reform::Form.class_eval do
   include Reform::Form::Dry
@@ -64,22 +68,25 @@ Formular::Helper.builder(:bootstrap3)
 module Exp
   class Application < Sinatra::Base
     get "/expenses/new" do
-      Expense::Endpoint::New.( params: params )
+      ::Endpoint::HTML.(Expense::Create::Present, params, Expense::Cell::New, :new)
     end
 
     post "/expenses" do
-      Expense::Endpoint.create( params: params, sinatra: self )
+      ::Endpoint::HTML.(Expense::Create, params, Expense::Cell::New, :create) { |result| return redirect("/expenses/new") }
     end
 
     post "/expenses/upload" do
-      Expense::Endpoint.upload( params: params, sinatra: self )
+      ::Endpoint::HTML.( Expense::Upload, params, nil, nil ) do |result|
+        # TODO: use representer, etc.
+        JSON.dump( { files: [{ path: result["files"][0].path }] } )
+      end
     end
 
     get "/expenses/edit/:id" do
-      Expense::Endpoint.edit( params: params, sinatra: self )
+      ::Endpoint::HTML.(Expense::Update::Present, params, Expense::Cell::Edit, :edit)
     end
     post "/expenses/:id" do
-      Expense::Endpoint.update( params: params, sinatra: self )
+      ::Endpoint::HTML.(Expense::Update, params, Expense::Cell::Edit, :update) { |result| return redirect("/expenses/new") }
     end
 
 
@@ -91,11 +98,15 @@ module Exp
       Claim::Endpoint.show( params: params, sinatra: self )
     end
 
+    get "/claims/:id/rezip" do
+      Claim::Endpoint.rezip( params: params, sinatra: self )
+    end
+
     # FIXME: security?
     get "/debug/:id" do
-      Expense::Update.( id: 94, unit_price: "17" )
+      # return Expense::Row.last.inspect
+      Expense::Update.( params: {id: 377, invoice_date: "27/12/2017"} )
       CGI::escape_html Expense::Row[ params[:id] ].inspect
-
     end
 
     # Get assets going.
@@ -113,6 +124,13 @@ module Exp
     # set :public_folder, "assets/__uploads"
     get "/files/:path" do
       send_file File.join("uploads", params[:path])
+    end
+
+    get "/paypal" do
+      Expense::File.( params: { expenses: [ 346, 347, 348 ] }, archive_dir: "./downloads", upload_dir: "./uploads", type: "sale-paypal", serial_number: 1, identifier: "2017-sale-paypal-1" )
+    end
+    get "/purchases" do
+      Expense::File.( params: { expenses: [ 364, 365, 366, 367, 368 ] }, archive_dir: "./downloads", upload_dir: "./uploads", type: "purchase-ocbc", serial_number: 1, identifier: "2017-purchase-ocbc-1" )
     end
   end
 end

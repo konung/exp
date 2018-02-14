@@ -1,6 +1,7 @@
 <%= Object.new.extend(Formular::Helper).form(nil, "/claims", method: :post) do |f| %>
 
   <%= model.size %>
+  (<%= model.collect { |twin| twin.effective_money }.inject(0, &:+) %> SGD, kill me for this horrible code)
   <table class="table">
     <thead>
       <tr>
@@ -10,6 +11,7 @@
         <th>Files</th>
         <th>Date</th>
         <th>Remarks</th>
+        <th>Txn</th>
         <th><%= f.submit content: "Claim selected expenses", class: ["btn-warning"]  %></th>
       </tr>
     </thead>

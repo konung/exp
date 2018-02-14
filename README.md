@@ -15,6 +15,12 @@ For you, this boils down to providing `.env.development` and `.env.test` files i
 DATABASE_URL="postgres://user:password@localhost/myblog_test"
 ```
 
+## Development
+
+```
+rerun -- rackup -p 9999
+```
+
 ## Migrations
 
 ```
@@ -26,6 +32,13 @@ RACK_ENV=test rake db:migrate[0]
 
 ```
 RACK_ENV=test rake db:debug
+```
+
+## Backup
+
+```ruby
+pg_dump -U trbinc exp_production -W -h 127.0.0.1  >> BACKUP/__db.sql
+rsync /var/www/exp/shared/uploads/ -av BACKUP/
 ```
 
 
